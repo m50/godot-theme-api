@@ -32,7 +32,7 @@ class ParserTest extends TestCase
         ];
         $lexer = new Lexer();
         $parser = new Parser();
-        $output = iterator_to_array($parser->process($lexer->process($input)));
+        $output = $parser->process($lexer->process($input));
         $this->assertEquals($expected, $output);
     }
 }

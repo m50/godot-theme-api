@@ -4,6 +4,7 @@
   "type": "project",
   "require": {
     "php": "^8.0",
+    "anahkiasen/underscore-php": "^2.0",
     "myclabs/php-enum": "^1.7",
     "webmozart/assert": "^1.9"
   },

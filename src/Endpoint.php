@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace GCSS;
 
 use Exception;
-use GCSS\Syntax\Lexer;
+use GCSS\Syntax\Lexer\Lexer;
 use GCSS\Syntax\Parser\Parser;
-use GCSS\SGCSS\Syntax\Transpiler;
+use GCSS\Syntax\Transpiler;
 
 class Endpoint
 {

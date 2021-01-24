@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-namespace GCSS\Syntax\Parser;
+namespace GCSS\Syntax;
+
+use GCSS\Syntax\Lexer\Lexer;
+use GCSS\Syntax\Parser\Parser;
 
 class Transpiler
 {

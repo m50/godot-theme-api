@@ -14,8 +14,15 @@ class Lexer
     private const V_TRUE = 'true';
     private const V_FALSE = 'false';
 
-    public function process(string $input): \Generator
+    /**
+     * Lexes the input string to create a token tree.
+     *
+     * @param string $input The GCSS code to be lexed.
+     * @return list<array{0:Token,1:string}>
+     */
+    public function process(string $input): array
     {
+        $ret = [];
         $chars = \str_split($input);
         $idx = 0;
         $line = 1;
@@ -24,38 +31,38 @@ class Lexer
             $char = $chars[$idx];
             $idx++;
             switch (true) {
-                case ctype_space($char):
+                case \ctype_space($char):
                     if ($char === "\n") {
                         $line++;
                         $column = 1;
                     }
                     break;
-                case str_contains('>:', $char):
-                    yield [Token::OPERATION(), $char];
+                case \in_array($char, ['>', ':'], true):
+                    $ret[] = [Token::OPERATION(), $char];
                     break;
-                case str_contains('{};', $char):
-                    yield [Token::fromSpecialCharacter($char), ''];
+                case \in_array($char, ['{', '}', ';'], true):
+                    $ret[] = [Token::fromSpecialCharacter($char), ''];
                     break;
                 case "{$char}{$chars[$idx]}" === self::OP_OPEN_COMMENT:
                     $this->scanComment($idx, $chars);
                     break;
                 case $char === self::OP_STRING:
-                    yield [Token::T_STRING(), $this->scanString($idx, $chars)];
+                    $ret[] = [Token::T_STRING(), $this->scanString($idx, $chars)];
                     break;
                 case (bool)preg_match('/[\.0-9]/', $char):
-                    yield [Token::T_NUMBER(), $this->scanExpr($idx, $chars, '/[\.0-9]/')];
+                    $ret[] = [Token::T_NUMBER(), $this->scanExpr($idx, $chars, '/[\.0-9]/')];
                     break;
                 case $char === self::OP_COLOR:
-                    yield [Token::T_COLOR(), $this->scanExpr($idx, $chars, '/[#0-9a-f]/i')];
+                    $ret[] = [Token::T_COLOR(), $this->scanExpr($idx, $chars, '/[#0-9a-f]/i')];
                     break;
                 case (bool)preg_match('/[a-z]/i', $char):
                     $symbol = $this->scanExpr($idx, $chars, '/[a-zA-Z0-9\-]/');
                     if (\strtolower($symbol) === self::V_NULL) {
-                        yield [Token::T_NULL(), ''];
+                        $ret[] = [Token::T_NULL(), ''];
                     } elseif (\in_array(\strtolower($symbol), [self::V_TRUE, self::V_FALSE], true)) {
-                        yield [TOKEN::T_BOOLEAN(), $symbol];
+                        $ret[] = [Token::T_BOOLEAN(), $symbol];
                     } else {
-                        yield [Token::SYMBOL(), $symbol];
+                        $ret[] = [Token::SYMBOL(), $symbol];
                     }
                     break;
                 default:
@@ -63,6 +70,8 @@ class Lexer
             }
             $column++;
         }
+
+        return $ret;
     }
 
     /**

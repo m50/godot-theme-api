@@ -17,6 +17,7 @@ use MyCLabs\Enum\Enum;
  * @method static Token STATEMENT_TERMINATOR()
  * @method static Token BLOCK_START()
  * @method static Token BLOCK_END()
+ * @psalm-mutation-free
  */
 class Token extends Enum
 {
@@ -34,19 +35,29 @@ class Token extends Enum
     private const BLOCK_START = '{';
     private const BLOCK_END = '}';
 
-    public static function fromSpecialCharacter(string $char): static
+    /**
+     * Determines which special character token the char is.
+     *
+     * @param string $char
+     * @psalm-param ';'|'{'|'}' $char
+     * @return Token
+     * @throws TokenException If valid token isn't provided.
+     */
+    public static function fromSpecialCharacter(string $char): Token
     {
-        if ($char === ';') {
-            return static::STATEMENT_TERMINATOR();
-        } elseif ($char === '{') {
-            return static::BLOCK_START();
-        } elseif ($char === '}') {
-            return static::BLOCK_END();
-        }
+        return match($char) {
+            ';' => static::STATEMENT_TERMINATOR(),
+            '{' => static::BLOCK_START(),
+            '}' => static::BLOCK_END(),
+        };
     }
 
+    /**
+     * @psalm-immutable
+     * @return string
+     */
     public function __toString()
     {
-        return $this->value;
+        return (string)$this->value;
     }
 }
