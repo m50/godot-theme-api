@@ -26,9 +26,9 @@ class Endpoint
             echo $tresText;
         } catch (Exception $e) {
             header("Content-Type: text/plain");
-            http_response_code(500);
-            echo $e->getMessage() . PHP_EOL;
-            echo $e->getTrace() . PHP_EOL;
+            $code = (int)$e->getCode();
+            http_response_code($code >= 400 ? $code : 500);
+            echo $e->__toString() . PHP_EOL;
         }
     }
 }

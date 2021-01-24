@@ -13,4 +13,9 @@ class DynamicFont extends Resource
     public bool $useMipmaps = false;
     public bool $useFilter = false;
     public string $font = '';
+
+    public function __construct()
+    {
+        $this->outlineColor = new Color();
+    }
 }
