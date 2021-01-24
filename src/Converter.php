@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace GCSS;
 
-class Convertor
+class Converter
 {
     public function execute(string $input): string
     {
