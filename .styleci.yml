@@ -1,4 +1,5 @@
 preset: PSR12
+version: 8
 risky: true
 enabled:
   - not_operator_with_successor_space
