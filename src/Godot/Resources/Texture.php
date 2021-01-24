@@ -6,5 +6,10 @@ namespace GCSS\Godot\Resources;
 
 class Texture extends Resource
 {
-    public function __construct(public string $path = '') {}
+    public string $path = '';
+
+    public function __construct(string $path)
+    {
+        $this->path = $path;
+    }
 }

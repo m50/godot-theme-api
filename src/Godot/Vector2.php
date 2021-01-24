@@ -8,7 +8,14 @@ use GCSS\Contracts\TRes;
 
 class Vector2 implements TRes
 {
-    public function __construct(public float $x = 0, public float $y = 0){}
+    public float $x;
+    public float $y;
+
+    public function __construct(float $x = 0, float $y = 0)
+    {
+        $this->x = $x;
+        $this->y = $y;
+    }
 
     public function toTresString(): string
     {

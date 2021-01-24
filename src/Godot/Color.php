@@ -13,7 +13,7 @@ class Color implements TRes
     public float $b = 0;
     public float $a = 0;
 
-    public function __construct(public string $hex = '#ffffffff')
+    public function __construct(string $hex = '#ffffffff')
     {
         // Convert from hex notation to rgba here.
     }
