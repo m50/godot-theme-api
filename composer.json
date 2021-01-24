@@ -2,8 +2,10 @@
   "name": "m50/godot-theme-api",
   "description": "An api to convert a CSS-like file into a godot theme file.",
   "type": "project",
-  "require-dev": {
+  "require": {
     "php": "^8.0",
+  },
+  "require-dev": {
     "phpunit/phpunit": "^9.5",
     "vimeo/psalm": "^4.4",
     "php-coveralls/php-coveralls": "^2.4",
