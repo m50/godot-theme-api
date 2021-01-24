@@ -6,5 +6,5 @@ namespace GCSS\Godot\Resources;
 
 abstract class StyleBox extends Resource
 {
-
+    //
 }

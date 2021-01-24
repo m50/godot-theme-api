@@ -6,5 +6,5 @@ namespace GCSS\Godot\Nodes;
 
 abstract class Control
 {
-
+    //
 }
