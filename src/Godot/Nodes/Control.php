@@ -31,8 +31,7 @@ abstract class Control
      */
     public function setStyles(array $styles): static
     {
-        foreach ($styles as $key => $value)
-        {
+        foreach ($styles as $key => $value) {
             if (\is_null($value)) {
                 continue;
             }

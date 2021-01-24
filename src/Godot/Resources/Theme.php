@@ -16,6 +16,7 @@ class Theme extends Resource
     public function setFont(Font $font): Theme
     {
         $this->defaultFont = $font;
+
         return $this;
     }
 
@@ -27,6 +28,7 @@ class Theme extends Resource
     public function addNode(Control $node): Theme
     {
         $this->nodes[] = $node;
+
         return $this;
     }
 

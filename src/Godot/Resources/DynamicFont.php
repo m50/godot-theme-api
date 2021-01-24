@@ -23,6 +23,7 @@ class DynamicFont extends Font
     public function setFont(string $path): static
     {
         $this->font = new DynamicFontData($path);
+
         return $this;
     }
 

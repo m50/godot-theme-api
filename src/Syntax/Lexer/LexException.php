@@ -18,6 +18,7 @@ class LexException extends Exception
     {
         $e = new LexException('', 0, 0);
         $e->message = 'Unexpected end of file. Did you properly close your blocks?';
+
         return $e;
     }
 }

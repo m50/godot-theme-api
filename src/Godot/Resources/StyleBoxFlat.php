@@ -37,24 +37,28 @@ class StyleBoxFlat extends StyleBox
     public function setContentMarginLeft(float $value): static
     {
         $this->contentMarginLeft = $value;
+
         return $this;
     }
 
     public function setContentMarginRight(float $value): static
     {
         $this->contentMarginRight = $value;
+
         return $this;
     }
 
     public function setContentMarginTop(float $value): static
     {
         $this->contentMarginTop = $value;
+
         return $this;
     }
 
     public function setContentMarginBottom(float $value): static
     {
         $this->contentMarginBottom = $value;
+
         return $this;
     }
 
@@ -64,30 +68,35 @@ class StyleBoxFlat extends StyleBox
             $value = new Color($value);
         }
         $this->bgColor = $value;
+
         return $this;
     }
 
     public function setBorderWidthLeft(float $value): static
     {
         $this->borderWidthLeft = $value;
+
         return $this;
     }
 
     public function setBorderWidthTop(float $value): static
     {
         $this->borderWidthTop = $value;
+
         return $this;
     }
 
     public function setBorderWidthRight(float $value): static
     {
         $this->borderWidthRight = $value;
+
         return $this;
     }
 
     public function setBorderWidthBottom(float $value): static
     {
         $this->borderWidthBottom = $value;
+
         return $this;
     }
 
@@ -97,37 +106,42 @@ class StyleBoxFlat extends StyleBox
             $value = new Color($value);
         }
         $this->borderColor = $value;
+
         return $this;
     }
 
     public function setBorderBlend(bool $value): static
     {
         $this->borderBlend = $value;
+
         return $this;
     }
 
     public function setCornerRadiusTopLeft(float $value): static
     {
         $this->cornerRadiusTopLeft = $value;
+
         return $this;
     }
 
     public function setCornerRadiusTopRight(float $value): static
     {
         $this->cornerRadiusTopRight = $value;
+
         return $this;
     }
 
     public function setCornerRadiusBottomRight(float $value): static
     {
         $this->cornerRadiusBottomRight = $value;
+
         return $this;
     }
 
     public function setCornerRadiusBottomLeft(float $value): static
     {
         $this->cornerRadiusBottomLeft = $value;
+
         return $this;
     }
-
 }

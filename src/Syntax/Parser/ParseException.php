@@ -36,6 +36,7 @@ class ParseException extends Exception
     {
         $reflect = new ReflectionClass($nodeName);
         $shortName = $reflect->getShortName();
+
         return new ParseException("Property {$property} does not exist on {$shortName} at {$location}.");
     }
 
