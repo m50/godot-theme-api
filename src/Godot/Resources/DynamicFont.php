@@ -6,18 +6,24 @@ namespace GCSS\Godot\Resources;
 
 use GCSS\Godot\Color;
 
-class DynamicFont extends Resource
+class DynamicFont extends Font
 {
     public float $outlineSize = 0.0;
     public Color $outlineColor;
     public bool $useMipmaps = false;
     public bool $useFilter = false;
-    public string $font = '';
+    public DynamicFontData $font;
 
-    public function __construct(string $font = '')
+    public function __construct(string $path = '')
     {
         $this->outlineColor = new Color();
-        $this->font = $font;
+        $this->font = new DynamicFontData($path);
+    }
+
+    public function setFont(string $path): static
+    {
+        $this->font = new DynamicFontData($path);
+        return $this;
     }
 
     public function setOutlineSize(float $size): static

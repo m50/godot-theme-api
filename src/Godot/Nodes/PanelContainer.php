@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GCSS\Godot\Nodes;
 
+use GCSS\Exceptions\ValueException;
 use GCSS\Godot\Resources\StyleBox;
 
 class PanelContainer extends Control

@@ -13,4 +13,11 @@ class LexException extends Exception
         $this->code = 400;
         $this->message = "Found invalid token `{$char}` on line {$line}, column {$column}.";
     }
+
+    public static function unexpectedEndOfFile(): LexException
+    {
+        $e = new LexException('', 0, 0);
+        $e->message = 'Unexpected end of file. Did you properly close your blocks?';
+        return $e;
+    }
 }

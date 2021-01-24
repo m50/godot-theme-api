@@ -14,6 +14,7 @@ h-slider {
         grabber-highlight: "res://Assets/UserInterface/UIElements/SliderHighlight.png";
         tick: null;
     }
+    // This section isn't actually necessary, since we are setting these to null...
     styles {
         grabber-area: null;
         grabber-area-highlight: null;

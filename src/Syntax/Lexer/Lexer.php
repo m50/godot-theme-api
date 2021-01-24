@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace GCSS\Syntax\Lexer;
 
+use Exception;
+use GCSS\Syntax\Parser\ParseException;
+use Underscore\Parse;
+
 class Lexer
 {
     private const OP_STRING = '"';
+    private const OP_SINGLELINE_COMMENT = '//';
     private const OP_OPEN_COMMENT = '/*';
     private const OP_CLOSE_COMMENT = '*/';
     private const OP_COLOR = '#';
@@ -18,7 +23,7 @@ class Lexer
      * Lexes the input string to create a token tree.
      *
      * @param string $input The GCSS code to be lexed.
-     * @return list<array{0:Token,1:string}>
+     * @return list<array{0:Token,1:string,2:string}>
      */
     public function process(string $input): array
     {
@@ -30,45 +35,57 @@ class Lexer
         while (isset($chars[$idx])) {
             $char = $chars[$idx];
             $idx++;
+            $prevIdx = $idx;
             switch (true) {
                 case \ctype_space($char):
                     if ($char === "\n") {
                         $line++;
-                        $column = 1;
+                        $column = 0;
                     }
                     break;
                 case \in_array($char, ['>', ':'], true):
-                    $ret[] = [Token::OPERATION(), $char];
+                    $ret[] = [Token::OPERATION(), $char, "{$line}:{$column}"];
                     break;
                 case \in_array($char, ['{', '}', ';'], true):
-                    $ret[] = [Token::fromSpecialCharacter($char), ''];
+                    $ret[] = [Token::fromSpecialCharacter($char), '', "{$line}:{$column}"];
+                    break;
+                case "{$char}{$chars[$idx]}" === self::OP_SINGLELINE_COMMENT:
+                    $this->scanExpr($idx, $chars, '/[^\n]/');
                     break;
                 case "{$char}{$chars[$idx]}" === self::OP_OPEN_COMMENT:
-                    $this->scanComment($idx, $chars);
+                    $this->scanComment($idx, $chars, "{$line}:{$column}");
                     break;
                 case $char === self::OP_STRING:
-                    $ret[] = [Token::T_STRING(), $this->scanString($idx, $chars)];
+                    $ret[] = [Token::T_STRING(), $this->scanString($idx, $chars), "{$line}:{$column}"];
                     break;
                 case (bool)preg_match('/[\.0-9]/', $char):
-                    $ret[] = [Token::T_NUMBER(), $this->scanExpr($idx, $chars, '/[\.0-9]/')];
+                    $ret[] = [
+                        Token::T_NUMBER(),
+                        $this->scanExpr($idx, $chars, '/[\.0-9]/'),
+                        "{$line}:{$column}"
+                    ];
                     break;
                 case $char === self::OP_COLOR:
-                    $ret[] = [Token::T_COLOR(), $this->scanExpr($idx, $chars, '/[#0-9a-f]/i')];
+                    $ret[] = [
+                        Token::T_COLOR(),
+                        $this->scanExpr($idx, $chars, '/[#0-9a-f]/i'),
+                        "{$line}:{$column}"
+                    ];
                     break;
                 case (bool)preg_match('/[a-z]/i', $char):
                     $symbol = $this->scanExpr($idx, $chars, '/[a-zA-Z0-9\-]/');
                     if (\strtolower($symbol) === self::V_NULL) {
-                        $ret[] = [Token::T_NULL(), ''];
+                        $ret[] = [Token::T_NULL(), '', "{$line}:{$column}"];
                     } elseif (\in_array(\strtolower($symbol), [self::V_TRUE, self::V_FALSE], true)) {
-                        $ret[] = [Token::T_BOOLEAN(), $symbol];
+                        $ret[] = [Token::T_BOOLEAN(), $symbol, "{$line}:{$column}"];
                     } else {
-                        $ret[] = [Token::SYMBOL(), $symbol];
+                        $ret[] = [Token::SYMBOL(), $symbol, "{$line}:{$column}"];
                     }
                     break;
                 default:
                     throw new LexException($char, $line, $column);
             }
-            $column++;
+            $column += $idx + 1 - $prevIdx;
         }
 
         return $ret;
@@ -104,9 +121,12 @@ class Lexer
     private function scanString(int &$idx, array $chars): string
     {
         $ret = '';
-        while (isset($chars[$idx]) && $chars[$idx] !== self::OP_STRING) {
+        while ($chars[$idx] !== self::OP_STRING) {
             $ret .= $chars[$idx];
             $idx++;
+            if (! isset($chars[$idx])) {
+                throw LexException::unexpectedEndOfFile();
+            }
         }
         $idx++;
 

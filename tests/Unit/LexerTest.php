@@ -15,47 +15,71 @@ class LexerTest extends TestCase
     public function test_color_lex()
     {
         $input = '#ffffff00';
-        $expected = [[Token::T_COLOR(), '#ffffff00']];
+        $expected = [[Token::T_COLOR(), '#ffffff00', '1:1']];
         $this->assertLexer($input, $expected);
     }
 
+    /** @test */
+    public function test_multiline_comment()
+    {
+        $input = <<<INPUT
+        /*
+         test
+        */
+        INPUT;
+        $lexer = new Lexer();
+        $output = $lexer->process($input);
+        $this->assertEmpty($output);
+    }
+
+    /** @test */
+    public function test_single_line_comment()
+    {
+        $input = <<<INPUT
+        // test
+        ;
+        INPUT;
+        $expected = [[Token::STATEMENT_TERMINATOR(), '', '2:1']];
+        $this->assertLexer($input, $expected);
+    }
 
     /** @test */
     public function test_basic_lex()
     {
         $input = <<<INPUT
-        /* test */
-        default-font {
-            outline-size: 1;
-            outline-color: #000000ff;
-            use-mipmaps: true;
-            font: "res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf";
-        }
-        INPUT;
+            /* test */
+            default-font {
+                outline-size: 1;
+                outline-color: #000000ff;
+                use-mipmaps: true;
+                font: "res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf";
+            }
+            INPUT;
         $expected = [
-            [Token::SYMBOL(), 'default-font'],
-            [Token::BLOCK_START(), ''],
+            [Token::SYMBOL(), 'default-font', '2:1'],
+            [Token::BLOCK_START(), '', '2:14'],
 
-            [Token::SYMBOL(), 'outline-size'],
-            [Token::OPERATION(), ':'],
-            [Token::T_NUMBER(), '1'],
-            [Token::STATEMENT_TERMINATOR(), ''],
+            [Token::SYMBOL(), 'outline-size', '3:5'],
+            [Token::OPERATION(), ':', '3:17'],
+            [Token::T_NUMBER(), '1', '3:19'],
+            [Token::STATEMENT_TERMINATOR(), '', '3:20'],
 
-            [Token::SYMBOL(), 'outline-color'],
-            [Token::OPERATION(), ':'],
-            [Token::T_COLOR(), '#000000ff'],
-            [Token::STATEMENT_TERMINATOR(), ''],
+            [Token::SYMBOL(), 'outline-color', '4:5'],
+            [Token::OPERATION(), ':', '4:18'],
+            [Token::T_COLOR(), '#000000ff', '4:20'],
+            [Token::STATEMENT_TERMINATOR(), '', '4:29'],
 
-            [Token::SYMBOL(), 'use-mipmaps'],
-            [Token::OPERATION(), ':'],
-            [Token::T_BOOLEAN(), 'true'],
-            [Token::STATEMENT_TERMINATOR(), ''],
+            [Token::SYMBOL(), 'use-mipmaps', '5:5'],
+            [Token::OPERATION(), ':', '5:16'],
+            [Token::T_BOOLEAN(), 'true', '5:18'],
+            [Token::STATEMENT_TERMINATOR(), '', '5:22'],
 
-            [Token::SYMBOL(), 'font'],
-            [Token::OPERATION(), ':'],
-            [Token::T_STRING(), 'res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf'],
-            [Token::STATEMENT_TERMINATOR(), ''],
-            [Token::BLOCK_END(), ''],
+            [Token::SYMBOL(), 'font', '6:5'],
+            [Token::OPERATION(), ':', '6:9'],
+            [Token::T_STRING(), 'res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf', '6:11'],
+            [Token::STATEMENT_TERMINATOR(), '', '6:70'],
+
+            [Token::BLOCK_END(), '', '7:1'],
         ];
 
         $this->assertLexer($input, $expected);
@@ -69,14 +93,25 @@ class LexerTest extends TestCase
         $this->expectException(LexException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage("Found invalid token `'` on line 1, column 1.");
-        iterator_to_array($lexer->process($input));
+        $lexer->process($input);
+    }
+
+    /** @test */
+    public function test_unexpected_end_of_file()
+    {
+        $lexer = new Lexer();
+        $input = '"blah';
+        $this->expectException(LexException::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage("Unexpected end of file. Did you properly close your blocks?");
+        $lexer->process($input);
     }
 
     /** @test */
     public function test_lex_works_on_1_character_file()
     {
         $input = ";";
-        $expected = [[Token::STATEMENT_TERMINATOR(), '']];
+        $expected = [[Token::STATEMENT_TERMINATOR(), '', '1:1']];
         $this->assertLexer($input, $expected);
     }
 

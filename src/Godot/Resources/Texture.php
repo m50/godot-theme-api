@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace GCSS\Godot\Resources;
 
-class Texture extends Resource
+use GCSS\Contracts\ExternalResource;
+
+class Texture extends Resource implements ExternalResource
 {
     public string $path = '';
 
