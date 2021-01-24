@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace GCSS;
 
 use Exception;
+use GCSS\Syntax\Lexer;
+use GCSS\Syntax\Parser\Parser;
+use GCSS\SGCSS\Syntax\Transpiler;
 
 class Endpoint
 {
@@ -19,7 +22,7 @@ class Endpoint
 
         $postInput = file_get_contents('php://input');
 
-        $converter = new Converter();
+        $converter = new Transpiler(new Lexer(), new Parser());
         try {
             $tresText = $converter->execute($postInput);
             header("Content-Type: text/plain");
