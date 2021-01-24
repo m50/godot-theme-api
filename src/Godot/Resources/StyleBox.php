@@ -22,10 +22,10 @@ abstract class StyleBox extends Resource implements SubResource
             }
             $key = Strings::toCamelCase($key);
             $method = 'set' . Strings::toPascalCase($key);
-            if (! \property_exists(static::class, $key) || ! \method_exists(static::class, $method)) {
+            if (! \property_exists(get_called_class(), $key) || ! \method_exists(get_called_class(), $method)) {
                 dump($key, $method);
                 $key = Strings::toSnakeCase($key);
-                throw new ValueException(static::class, $key);
+                throw new ValueException(get_called_class(), $key);
             }
             $this->$method($value);
         }
