@@ -53,7 +53,7 @@ class Lexer
                     $this->scanExpr($idx, $chars, '/[^\n]/');
                     break;
                 case "{$char}{$chars[$idx]}" === self::OP_OPEN_COMMENT:
-                    $this->scanComment($idx, $chars, "{$line}:{$column}");
+                    $this->scanComment($idx, $chars);
                     break;
                 case $char === self::OP_STRING:
                     $ret[] = [Token::T_STRING(), $this->scanString($idx, $chars), "{$line}:{$column}"];

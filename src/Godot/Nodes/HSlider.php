@@ -47,7 +47,7 @@ class HSlider extends Control
     }
 
     /**
-     * @param array<string,string> $icons
+     * @param array<string,string|null> $icons
      * @return static
      */
     public function setIcons(array $icons): static

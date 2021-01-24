@@ -41,7 +41,7 @@ class Token extends Enum
      * @param string $char
      * @psalm-param ';'|'{'|'}' $char
      * @return Token
-     * @throws TokenException If valid token isn't provided.
+     * @throws LexException If valid token isn't provided.
      */
     public static function fromSpecialCharacter(string $char): Token
     {

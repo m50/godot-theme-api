@@ -13,4 +13,22 @@
             <directory name="tests" />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <InvalidReturnType>
+            <errorLevel type="suppress">
+            <file name="src/Syntax/Parser/Parser.php" />
+            </errorLevel>
+        </InvalidReturnType>
+        <InvalidReturnStatement>
+            <errorLevel type="suppress">
+            <file name="src/Syntax/Parser/Parser.php" />
+            </errorLevel>
+        </InvalidReturnStatement>
+        <UnsafeInstantiation>
+            <errorLevel type="suppress">
+            <file name="src/Syntax/Parser/Parser.php" />
+            </errorLevel>
+        </UnsafeInstantiation>
+    </issueHandlers>
 </psalm>

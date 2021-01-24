@@ -16,11 +16,22 @@ class ParseException extends Exception
         $this->code = 400;
     }
 
-    public static function unknownClass(string $nodeName, string $location): ParseException
+    public static function unknownNode(string $nodeName, string $location): ParseException
     {
-        return new ParseException("Unknown Node or Resource '{$nodeName}' at {$location}");
+        return new ParseException("Unknown Node '{$nodeName}' at {$location}");
     }
 
+    public static function unknownResource(string $resourceName, string $location): ParseException
+    {
+        return new ParseException("Unknown Resource '{$resourceName}' at {$location}");
+    }
+
+    /**
+     * @param class-string $nodeName
+     * @param string $property
+     * @param string $location
+     * @return ParseException
+     */
     public static function propertyDoesntExist(string $nodeName, string $property, string $location): ParseException
     {
         $reflect = new ReflectionClass($nodeName);

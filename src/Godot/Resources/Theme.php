@@ -8,7 +8,7 @@ use GCSS\Godot\Nodes\Control;
 
 class Theme extends Resource
 {
-    private Font $defaultFont;
+    private ?Font $defaultFont = null;
 
     /** @var list<\GCSS\Godot\Nodes\Control> */
     private array $nodes = [];
@@ -19,7 +19,7 @@ class Theme extends Resource
         return $this;
     }
 
-    public function getFont(): Font
+    public function getFont(): ?Font
     {
         return $this->defaultFont;
     }

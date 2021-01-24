@@ -37,18 +37,23 @@ class Parser
             } else {
                 if (Token::BLOCK_START()->equals($token)) {
                     if ($state === 'default-font') {
-                        $theme->setFont($this->buildObject($idx, $tokens, DynamicFont::class));
+                        /** @var \GCSS\Godot\Resources\Font $font */
+                        $font = $this->buildObject($idx, $tokens, DynamicFont::class);
+                        $theme->setFont($font);
                     } else {
-                        $class = $this->validateClass($state, $location);
-                        $theme->addNode($this->buildObject($idx, $tokens, $class));
+                        $class = $this->validateNode($state, $location);
+                        /** @var Control $node */
+                        $node = $this->buildObject($idx, $tokens, $class);
+                        $theme->addNode($node);
                     }
                     $state = 'root';
                 } elseif (Token::OPERATION()->equals($token) && $value === '>') {
                     $idx++;
-                    $class = $this->validateClass($state, $location);
+                    $class = $this->validateNode($state, $location);
+                    /** @var Control $node */
                     $node = new $class();
-                    $this->setNextObjectValue($idx, $tokens, $node);
                     $theme->addNode($node);
+                    $this->setNextObjectValue($idx, $tokens, $node);
                 }
             }
             $idx++;
@@ -63,34 +68,47 @@ class Parser
      * @param string $state
      * @param string $value
      * @param string $location
-     * @return string&class-string<Control|Resource>
+     * @return class-string<Resource>
      */
-    private function validateClass(string $state, string $location): string
+    private function validateResource(string $state, string $location): string
     {
-        /** @var string&class-string<Control> $class */
-        $class = '\\GCSS\\Godot\\Nodes\\' . Strings::toPascalCase($state);
-        if (! class_exists($class) || ! is_subclass_of($class, Control::class, true)) {
-            /** @var string&class-string<Resource> $class */
-            $class = '\\GCSS\\Godot\\Resources\\' . Strings::toPascalCase($state);
-            if (class_exists($class) && is_subclass_of($class, Resource::class, true)) {
-                return $class;
-            }
-            throw ParseException::unknownClass($state, $location);
+        /** @var class-string<Resource> $class */
+        $class = '\\GCSS\\Godot\\Resources\\' . Strings::toPascalCase($state);
+        if (! class_exists($class)) {
+            throw ParseException::unknownResource($state, $location);
         }
 
         return $class;
     }
 
     /**
-     * @template T as Control|Resource
+     * Validates a symbol as a Control node
+     *
+     * @param string $state
+     * @param string $value
+     * @param string $location
+     * @return class-string<Control>
+     */
+    private function validateNode(string $state, string $location): string
+    {
+        /** @var class-string<Control> $class */
+        $class = '\\GCSS\\Godot\\Nodes\\' . Strings::toPascalCase($state);
+        if (! class_exists($class)) {
+            throw ParseException::unknownNode($state, $location);
+        }
+
+        return $class;
+    }
+
+    /**
      * @param int $idx
      * @param list<array{0:\GCSS\Syntax\Lexer\Token,1:string,2:string}> $tokens The output from the Lexer.
-     * @param class-string<T> $className
+     * @param class-string<Control>|class-string<Resource> $className
      * @return Control|Resource
-     * @psalm-return (T is Control ? Control : Resource)
      */
     private function buildObject(int &$idx, array $tokens, string $className): Control|Resource
     {
+        /** @var Control|Resource $obj */
         $obj = new $className();
         $idx++;
         while (! Token::BLOCK_END()->equals($tokens[$idx][0])) {
@@ -100,6 +118,13 @@ class Parser
         return $obj;
     }
 
+    /**
+     * @param int $idx
+     * @param list<array{0:\GCSS\Syntax\Lexer\Token,1:string,2:string}> $tokens The output from the Lexer.
+     * @param \GCSS\Godot\Nodes\Control|\GCSS\Godot\Resources\Resource $obj
+     * @return void
+     * @throws \GCSS\Syntax\Parser\ParseException
+     */
     private function setNextObjectValue(int &$idx, array $tokens, Control|Resource &$obj): void
     {
         [$key, $value, $location] = $this->readStatement($idx, $tokens);
@@ -114,7 +139,7 @@ class Parser
     /**
      * @param int $idx
      * @param list<array{0:\GCSS\Syntax\Lexer\Token,1:string,2:string}> $tokens The output from the Lexer.
-     * @return array{0:string,1:mixed,2:string}
+     * @return array{0:string,1:bool|Color|Resource|float|string|null|array,2:string}
      */
     private function readStatement(int &$idx, array $tokens): array
     {
@@ -133,7 +158,8 @@ class Parser
                 $statement[1] = $this->buildArray($idx, $tokens);
             } elseif ($inAssignment) {
                 if (Token::SYMBOL()->equals($token)) {
-                    $class = $this->validateClass($value, $location);
+                    /** @var class-string<Resource> $class */
+                    $class = $this->validateResource($value, $location);
                     $statement[1] = $this->buildObject($idx, $tokens, $class);
                 } else {
                     $statement[1] = match(true) {
@@ -153,13 +179,17 @@ class Parser
             }
         }
 
+        if (\is_null($statement[0]) || \is_null($statement[2])) {
+            throw ParseException::badOperation(':', '');
+        }
+
         return $statement;
     }
 
     /**
      * @param int $idx
      * @param list<array{0:\GCSS\Syntax\Lexer\Token,1:string,2:string}> $tokens The output from the Lexer.
-     * @return array<string,mixed>
+     * @return array<string,bool|Color|Resource|float|string|null>
      */
     private function buildArray(int &$idx, array $tokens): array
     {

@@ -18,7 +18,7 @@ abstract class Control
     public function setStyle(string $key, StyleBox $value): static
     {
         if (! \array_key_exists($key, $this->styles)) {
-            throw new ValueException("{$this->getShortName()}/styles/{$key} doesn't exist.");
+            throw new ValueException(self::class, "styles/{$key}");
         }
         $this->styles[$key] = $value;
 
@@ -26,7 +26,7 @@ abstract class Control
     }
 
     /**
-     * @param array<string,\GCSS\Godot\Resources\StyleBox> $styles
+     * @param array<string,\GCSS\Godot\Resources\StyleBox|null> $styles
      * @return static
      */
     public function setStyles(array $styles): static
