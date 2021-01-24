@@ -3,5 +3,8 @@
     "api/*.php": {
       "runtime": "vercel-php@0.4.0"
     }
-  }
+  },
+  "routes": [
+    { "src": "/convert",  "dest": "/api/convert.php" }
+  ]
 }
