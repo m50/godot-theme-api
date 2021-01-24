@@ -30,7 +30,7 @@ class Color implements TRes
     {
         Assert::regex($hex, self::HEX_PARSE_REGEX, "Color {$hex} must be a valid hex value.");
         if (preg_match(self::HEX_PARSE_REGEX, $hex, $matches)) {
-            $matches = array_values(array_filter($matches, fn($m) => strlen($m) > 0 && strlen($m) <= 2));
+            $matches = array_values(array_filter($matches, fn ($m) => strlen($m) > 0 && strlen($m) <= 2));
             foreach ($matches as $idx => $match) {
                 if (strlen($match) === 1) {
                     $match .= $match;
