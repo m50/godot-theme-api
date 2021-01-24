@@ -1,0 +1,36 @@
+{
+  "name": "m50/godot-theme-api",
+  "description": "An api to convert a CSS-like file into a godot theme file.",
+  "type": "project",
+  "require-dev": {
+    "php": "^8.0",
+    "phpunit/phpunit": "^9.5",
+    "vimeo/psalm": "^4.4",
+    "php-coveralls/php-coveralls": "^2.4",
+    "symfony/var-dumper": "^5.2"
+  },
+  "license": "MIT",
+  "authors": [
+    { "name": "Marisa Clardy", "email": "marisa@clardy.eu" }
+  ],
+  "autoload": {
+    "psr-4": {
+      "GCSS\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "GCSS\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test:unit": "php ./vendor/bin/phpunit",
+    "test:types": "php ./vendor/bin/psalm",
+    "test": [ "test:unit", "test:types" ]
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  }
+}

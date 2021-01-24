@@ -1,0 +1,42 @@
+default-font {
+    outline-size: 1;
+    outline-color: #000000ff;
+    use-mipmaps: true;
+    use-filter: true;
+    font: "res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf";
+}
+
+h-slider {
+    icons {
+        /* Icons for the grabber and ticks */
+        grabber: "res://Assets/UserInterface/UIElements/Slider.png";
+        grabber-disabled: "res://Assets/UserInterface/UIElements/SliderDisabled.png";
+        grabber-highlight: "res://Assets/UserInterface/UIElements/SliderHighlight.png";
+        tick: null;
+    }
+    styles {
+        grabber-area: null;
+        grabber-area-highlight: null;
+        slider: null;
+    }
+}
+
+panel-container > styles {
+    panel: StyleBoxFlat {
+        content-margin-left: 60.0;
+        content-margin-right: 60.0;
+        content-margin-top: 20.0;
+        content-margin-bottom: 20.0;
+        bg-color: #ebb57b;
+        border-width-left: 8;
+        border-width-top: 8;
+        border-width-right: 8;
+        border-width-bottom: 8;
+        border-color: #7d3833;
+        border-blend: true;
+        corner-radius-top-left: 8;
+        corner-radius-top-right: 8;
+        corner-radius-bottom-right: 8;
+        corner-radius-bottom-left: 8;
+    }
+}
