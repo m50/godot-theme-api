@@ -23,24 +23,28 @@ class DynamicFont extends Resource
     public function setOutlineSize(float $size): static
     {
         $this->outlineSize = $size;
+
         return $this;
     }
 
     public function setOutlineColor(Color $color): static
     {
         $this->outlineColor = $color;
+
         return $this;
     }
 
     public function setUseMipmaps(bool $enabled): static
     {
         $this->useMipmaps = $enabled;
+
         return $this;
     }
 
     public function setUseFilter(bool $enabled): static
     {
         $this->useFilter = $enabled;
+
         return $this;
     }
 }
