@@ -22,6 +22,7 @@ class Transpiler
     {
         $tokens = $this->lexer->process($input);
         $parsedObjects = $this->parser->process($tokens);
+
         return '';
     }
 }

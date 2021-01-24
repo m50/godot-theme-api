@@ -29,7 +29,6 @@ class Parser
             if ($state === 'root') {
                 if ($token[0] === Token::SYMBOL()) {
                     if ($token[1] === 'default-font') {
-
                     } else {
                         $class = '\\GCSS\\Godot\\Nodes\\' . Strings::toCamelCase($token[1]);
                         if (! class_exists($class)) {
