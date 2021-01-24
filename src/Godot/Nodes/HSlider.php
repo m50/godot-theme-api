@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GCSS\Godot\Nodes;
 
 use GCSS\Godot\Resources\StyleBox;
+use GCSS\Godot\Resources\Texture;
 
 class HSlider extends Control
 {
