@@ -23,7 +23,7 @@ class Transpiler
         $tokens = $this->lexer->process($input);
         $theme = $this->parser->process($tokens);
 
-        $formatter = new TresFormatter($theme);
+        $formatter = new TResFormatter($theme);
         return $formatter->render();
     }
 }

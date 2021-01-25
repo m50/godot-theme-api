@@ -18,7 +18,7 @@ class ValueException extends Exception
         $reflect = new ReflectionClass($class);
         $shortName = $reflect->getShortName();
 
-        return ValueException::missing("{$shortName}/{$property} doesn't exist.", 400);
+        return new ValueException("{$shortName}/{$property} doesn't exist.", 400);
     }
 
     /**
@@ -30,6 +30,6 @@ class ValueException extends Exception
         $reflect = new ReflectionClass($class);
         $shortName = $reflect->getShortName();
 
-        return ValueException::missing("{$shortName}/{$property} is not properly typed.", 400);
+        return new ValueException("{$shortName}/{$property} is not properly typed.", 400);
     }
 }
