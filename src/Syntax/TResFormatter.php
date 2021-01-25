@@ -27,7 +27,6 @@ class TResFormatter
     {
         $this->getNodeResources();
         $this->getDefaultFontResources();
-        $this->sortResources();
     }
 
     public function render(): string
@@ -56,6 +55,7 @@ class TResFormatter
             $properties = $refClass->getProperties();
             foreach ($properties as $prop) {
                 $key = $refClass->getShortName() . '/' . Strings::toSnakeCase(Strings::toCamelCase($prop->getName()));
+                /** @var scalar|array|ExternalResource|SubResource|TRes $value */
                 $value = $prop->getValue($node);
                 $this->renderValue($txt, $value, $key);
             }
@@ -213,35 +213,5 @@ class TResFormatter
                 }
             }
         }
-    }
-
-    private function sortResources(): void
-    {
-        $this->externalResources = $this->sortResourceArray($this->externalResources);
-        $this->subResources = $this->sortResourceArray($this->subResources);
-    }
-
-    private function sortResourceArray(array $resources): array
-    {
-        $resources = \array_map(function (string $key, array $value) {
-            return [$key, $value[1]];
-        }, \array_keys($resources), $resources);
-
-        \usort($resources, function ($a, $b): int {
-            if ($a[1] instanceof ExternalResource && $b[1] instanceof ExternalResource) {
-                // return \strlen($a[1]->getPath()) <=> \strlen($b[1]->getPath());
-                return \strcmp($a[1]->getPath(), $b[1]->getPath());
-            }
-
-            return 0;
-        });
-
-        $newResources = [];
-
-        foreach ($resources as $id => $resource) {
-            $newResources[$resource[0]] = [$id+1, $resource[1]];
-        }
-
-        return $newResources;
     }
 }

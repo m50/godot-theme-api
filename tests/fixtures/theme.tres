@@ -1,9 +1,9 @@
 [gd_resource type="Theme" load_steps=7 format=2]
 
-[ext_resource path="res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf" type="DynamicFontData" id=1]
-[ext_resource path="res://Assets/UserInterface/UIElements/Slider.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UserInterface/UIElements/SliderDisabled.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UserInterface/UIElements/SliderHighlight.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UserInterface/UIElements/Slider.png" type="Texture" id=1]
+[ext_resource path="res://Assets/UserInterface/UIElements/SliderDisabled.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UserInterface/UIElements/SliderHighlight.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Fonts/OpenDyslexic2/OpenDyslexic-Regular.otf" type="DynamicFontData" id=4]
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 60.0
@@ -27,13 +27,13 @@ outline_size = 1
 outline_color = Color( 0, 0, 0, 1 )
 use_mipmaps = true
 use_filter = true
-font_data = ExtResource( 1 )
+font_data = ExtResource( 4 )
 
 [resource]
 default_font = SubResource( 2 )
-HSlider/icons/grabber = ExtResource( 2 )
-HSlider/icons/grabber_disabled = ExtResource( 3 )
-HSlider/icons/grabber_highlight = ExtResource( 4 )
+HSlider/icons/grabber = ExtResource( 1 )
+HSlider/icons/grabber_disabled = ExtResource( 2 )
+HSlider/icons/grabber_highlight = ExtResource( 3 )
 HSlider/icons/tick = null
 HSlider/styles/grabber_area = null
 HSlider/styles/grabber_area_highlight = null
