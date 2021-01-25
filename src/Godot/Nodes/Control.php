@@ -17,7 +17,7 @@ abstract class Control
     public function setStyle(string $key, StyleBox $value): static
     {
         if (! \array_key_exists($key, $this->styles)) {
-            throw new ValueException(get_called_class(), "styles/{$key}");
+            throw ValueException::missing(get_called_class(), "styles/{$key}");
         }
         $this->styles[$key] = $value;
 
@@ -35,7 +35,7 @@ abstract class Control
                 continue;
             }
             if (! \array_key_exists($key, $this->styles)) {
-                throw new ValueException(get_called_class(), "styles/{$key}");
+                throw ValueException::missing(get_called_class(), "styles/{$key}");
             }
             $this->styles[$key] = $value;
         }

@@ -25,7 +25,7 @@ abstract class StyleBox extends Resource implements SubResource
             if (! \property_exists(get_called_class(), $key) || ! \method_exists(get_called_class(), $method)) {
                 dump($key, $method);
                 $key = Strings::toSnakeCase($key);
-                throw new ValueException(get_called_class(), $key);
+                throw ValueException::missing(get_called_class(), $key);
             }
             $this->$method($value);
         }

@@ -11,12 +11,25 @@ class ValueException extends Exception
 {
     /**
      * @param class-string $class
-     * @param string $key
+     * @param string $property
      */
-    public function __construct(string $class, string $key)
+    public static function missing(string $class, string $property): ValueException
     {
         $reflect = new ReflectionClass($class);
         $shortName = $reflect->getShortName();
-        $this->message = "{$shortName}/{$key} doesn't exist.";
+
+        return ValueException::missing("{$shortName}/{$property} doesn't exist.", 400);
+    }
+
+    /**
+     * @param class-string $class
+     * @param string $property
+     */
+    public static function untyped(string $class, string $property): ValueException
+    {
+        $reflect = new ReflectionClass($class);
+        $shortName = $reflect->getShortName();
+
+        return ValueException::missing("{$shortName}/{$property} is not properly typed.", 400);
     }
 }

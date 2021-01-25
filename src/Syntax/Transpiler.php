@@ -21,8 +21,9 @@ class Transpiler
     public function execute(string $input): string
     {
         $tokens = $this->lexer->process($input);
-        $parsedObjects = $this->parser->process($tokens);
+        $theme = $this->parser->process($tokens);
 
-        return '';
+        $formatter = new TresFormatter($theme);
+        return $formatter->render();
     }
 }

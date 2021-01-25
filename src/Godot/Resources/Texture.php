@@ -8,10 +8,13 @@ use GCSS\Contracts\ExternalResource;
 
 class Texture extends Resource implements ExternalResource
 {
-    public string $path = '';
-
-    public function __construct(string $path)
+    public function __construct(private string $path)
     {
         $this->path = $path;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }

@@ -39,7 +39,7 @@ class HSlider extends Control
             $value = new Texture($value);
         }
         if (! \array_key_exists($key, $this->icons)) {
-            throw new ValueException(static::class, "icons/{$key}");
+            throw ValueException::missing(static::class, "icons/{$key}");
         }
         $this->icons[$key] = $value;
 
@@ -57,7 +57,7 @@ class HSlider extends Control
                 continue;
             }
             if (! \array_key_exists($key, $this->icons)) {
-                throw new ValueException(static::class, "icons/{$key}");
+                throw ValueException::missing(static::class, "icons/{$key}");
             }
             $this->icons[$key] = new Texture($value);
         }

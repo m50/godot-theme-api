@@ -24,10 +24,10 @@ h-slider {
 
 panel-container > styles {
     panel: StyleBoxFlat {
-        content-margin-left: 60.0;
-        content-margin-right: 60.0;
-        content-margin-top: 20.0;
-        content-margin-bottom: 20.0;
+        content-margin-left: 60;
+        content-margin-right: 60;
+        content-margin-top: 20;
+        content-margin-bottom: 20;
         bg-color: #ebb57b;
         border-width-left: 8;
         border-width-top: 8;

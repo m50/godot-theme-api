@@ -6,4 +6,5 @@ namespace GCSS\Contracts;
 
 interface ExternalResource
 {
+    public function getPath(): string;
 }

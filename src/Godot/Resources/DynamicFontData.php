@@ -8,7 +8,12 @@ use GCSS\Contracts\ExternalResource;
 
 class DynamicFontData extends Resource implements ExternalResource
 {
-    public function __construct(public string $path)
+    public function __construct(private string $path)
     {
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }

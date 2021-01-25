@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GCSS\Godot\Resources;
 
 use GCSS\Godot\Nodes\Control;
+use GCSS\Syntax\TresFormatter;
 
 class Theme extends Resource
 {

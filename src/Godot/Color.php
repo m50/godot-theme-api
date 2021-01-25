@@ -49,8 +49,13 @@ class Color implements TRes
         }
     }
 
+    public function toArray(): array
+    {
+        return [$this->r, $this->g, $this->b, $this->a];
+    }
+
     public function toTresString(): string
     {
-        return "Color( {$this->r}, {$this->g}, {$this->b}, {$this->a} )";
+        return sprintf('Color( %0.6H, %0.6H, %0.6H, %0.6H )', ...$this->toArray());
     }
 }
