@@ -145,7 +145,7 @@ class Parser
     {
         $statement = [null, null, null];
         $inAssignment = false;
-        [$token] = $tokens[$idx];
+        [$token,,$statement[2]] = $tokens[$idx];
         while (
             ! Token::STATEMENT_TERMINATOR()->equals($tokens[$idx][0]) &&
             ! Token::BLOCK_END()->equals($tokens[$idx][0])
@@ -173,14 +173,13 @@ class Parser
                 }
             } elseif (Token::SYMBOL()->equals($token)) {
                 $statement[0] = $value;
-                $statement[2] = $location;
             } else {
                 throw ParseException::invalidSyntax($token, $location);
             }
         }
 
-        if (\is_null($statement[0]) || \is_null($statement[2])) {
-            throw ParseException::badOperation(':', '');
+        if (\is_null($statement[0])) {
+            throw ParseException::badOperation(':', $statement[2]);
         }
 
         return $statement;

@@ -18,12 +18,12 @@ class ParseException extends Exception
 
     public static function unknownNode(string $nodeName, string $location): ParseException
     {
-        return new ParseException("Unknown Node '{$nodeName}' at {$location}");
+        return new ParseException("Parse error: Unknown Node '{$nodeName}' at {$location}.");
     }
 
     public static function unknownResource(string $resourceName, string $location): ParseException
     {
-        return new ParseException("Unknown Resource '{$resourceName}' at {$location}");
+        return new ParseException("Parse error: Unknown Resource '{$resourceName}' at {$location}.");
     }
 
     /**
@@ -37,7 +37,7 @@ class ParseException extends Exception
         $reflect = new ReflectionClass($nodeName);
         $shortName = $reflect->getShortName();
 
-        return new ParseException("Property {$property} does not exist on {$shortName} at {$location}.");
+        return new ParseException("Parse error: Property {$property} does not exist on {$shortName} at {$location}.");
     }
 
     public static function invalidSyntax(Token $token, string $location): ParseException

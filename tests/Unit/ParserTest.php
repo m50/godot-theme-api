@@ -11,11 +11,80 @@ use GCSS\Godot\Resources\DynamicFont;
 use GCSS\Godot\Resources\StyleBoxFlat;
 use GCSS\Godot\Resources\Theme;
 use GCSS\Syntax\Lexer\Lexer;
+use GCSS\Syntax\Parser\ParseException;
 use GCSS\Syntax\Parser\Parser;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
+    /** @test */
+    public function test_invalid_root_syntax()
+    {
+        $input = ':';
+        $lexer = new Lexer();
+        $parser = new Parser();
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage("Parse error: Invalid token OPERATION at 1:1.");
+        $parser->process($lexer->process($input));
+    }
+
+    /** @test */
+    public function test_invalid_node()
+    {
+        $input = 'non-existant { }';
+        $lexer = new Lexer();
+        $parser = new Parser();
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage("Parse error: Unknown Node 'non-existant' at 1:14.");
+        $parser->process($lexer->process($input));
+    }
+
+    /** @test */
+    public function test_invalid_resource()
+    {
+        $input = <<<INPUT
+        panel-container > styles {
+            panel: NonExistant {
+            }
+        }
+        INPUT;
+        $lexer = new Lexer();
+        $parser = new Parser();
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage("Parse error: Unknown Resource 'NonExistant' at 2:12.");
+        $parser->process($lexer->process($input));
+    }
+
+    /** @test */
+    public function test_invalid_property()
+    {
+        $input = <<<INPUT
+        panel-container {
+            blah: 1
+        }
+        INPUT;
+        $lexer = new Lexer();
+        $parser = new Parser();
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage("Parse error: Property blah does not exist on PanelContainer at 2:5.");
+        $parser->process($lexer->process($input));
+    }
+
+    /** @test */
+    public function test_invalid_assignment_operator()
+    {
+        $input = <<<INPUT
+        panel-container {
+            : 1
+        }
+        INPUT;
+        $lexer = new Lexer();
+        $parser = new Parser();
+        $this->expectException(ParseException::class);
+        $this->expectExceptionMessage("Parse error: Invalid operator ':' at 2:5.");
+        $parser->process($lexer->process($input));
+    }
+
     /** @test */
     public function test_basic_parse()
     {
