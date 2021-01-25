@@ -25,7 +25,7 @@ class StyleBoxFlat extends StyleBox
     public int $cornerRadiusBottomLeft = 0;
 
     /**
-     * @param array<string,int|float|bool|Color|string|null> $options
+     * @param array<string,float|bool|Color|string|null> $options
      */
     public function __construct(array $options = [])
     {

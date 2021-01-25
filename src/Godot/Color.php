@@ -49,6 +49,7 @@ class Color implements TRes
         }
     }
 
+    /** @return array{float,float,float,float} */
     public function toArray(): array
     {
         return [$this->r, $this->g, $this->b, $this->a];

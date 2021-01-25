@@ -55,7 +55,11 @@ class TResFormatter
             $properties = $refClass->getProperties();
             foreach ($properties as $prop) {
                 $key = $refClass->getShortName() . '/' . Strings::toSnakeCase(Strings::toCamelCase($prop->getName()));
-                /** @var scalar|array|ExternalResource|SubResource|TRes $value */
+                /**
+                 * @var (ExternalResource|SubResource|
+                 *      array<string,ExternalResource|SubResource|scalar|null>|
+                 *      float|bool|string|int) $value
+                 */
                 $value = $prop->getValue($node);
                 $this->renderValue($txt, $value, $key);
             }
@@ -86,6 +90,11 @@ class TResFormatter
             [$id, $subResource] = $tuple;
             $type = (new ReflectionClass($subResource))->getShortName();
             $txt[] = "[sub_resource type=\"{$type}\" id={$id}]";
+            /**
+             * @var (ExternalResource|SubResource|
+             *      array<string,ExternalResource|SubResource|scalar|null>|
+             *      float|bool|string|int) $value
+             */
             foreach (\get_object_vars($subResource) as $key => $value) {
                 $key = Strings::toSnakeCase($key);
                 $this->renderValue($txt, $value, $key, $subResource);
@@ -93,9 +102,19 @@ class TResFormatter
             $txt[] = "";
         }
 
+        /** @var list<string> */
         return $txt;
     }
 
+    /**
+     * @param array $txt
+     * @param (ExternalResource|SubResource|
+     *      array<string,ExternalResource|SubResource|scalar|null>|
+     *      float|bool|string|int) $value
+     * @param string $key
+     * @param SubResource|null $owner
+     * @return void
+     */
     private function renderValue(array &$txt, mixed $value, string $key, ?SubResource $owner = null): void
     {
         $keyPrefix = '';
@@ -106,31 +125,28 @@ class TResFormatter
             $txt[] = "{$key} = ExtResource( {$this->externalResources[$keyPrefix . $key][0]} )";
         } elseif (\is_a($value, SubResource::class)) {
             $txt[] = "{$key} = SubResource( {$this->subResources[$keyPrefix . $key][0]} )";
-        } elseif (\is_subclass_of($value, TRes::class)) {
+        } elseif ($value instanceof TRes) {
             /** @var TRes $value */
             $txt[] = "{$key} = " . $value->toTResString();
         } elseif (\is_array($value)) {
             foreach ($value as $k => $value) {
                 $k = $key . '/' . Strings::toSnakeCase(Strings::toCamelCase($k));
                 $txt[] = match (true) {
-                    \is_a($value, ExternalResource::class) =>
+                    $value instanceof ExternalResource =>
                         "{$k} = ExtResource( {$this->externalResources[$keyPrefix . $k][0]} )",
-                    \is_a($value, SubResource::class) =>
+                    $value instanceof SubResource =>
                         "{$k} = SubResource( {$this->subResources[$keyPrefix . $k][0]} )",
-                    \is_a($value, TRes::class) =>
-                        /** @var TRes $value */
+                    $value instanceof TRes =>
                         $txt[] = "{$k} = " . $value->toTResString(),
                     \is_null($value) => "{$k} = null",
                     \is_string($value) => "{$k} = \"{$value}\"",
                     \is_bool($value) => "{$k} = " . ($value ? 'true' : 'false'),
-                    \is_float($value) => $this->formatFloat($value),
-                    \is_int($value) => sprintf('%d', $value),
-                    default => "{$k} = {$value}",
+                    \is_float($value) => "{$k} = " . $this->formatFloat($value),
+                    \is_int($value) => sprintf('%s = %d', $k, $value),
                 };
             }
         } else {
             $value = match (true) {
-                default => $value,
                 \is_bool($value) => $value ? 'true' : 'false',
                 \is_string($value) => '"' . $value . '"',
                 \is_float($value) => $this->formatFloat($value),
@@ -163,19 +179,24 @@ class TResFormatter
             if (! $prop->hasType()) {
                 throw ValueException::untyped($font::class, $prop->getName());
             }
-            $type = $prop->getType()->getName();
+            /**
+             * @var (ExternalResource|SubResource|
+             *      array<string,ExternalResource|SubResource|scalar|null>|
+             *      float|bool|string|int) $value
+             */
+            $value = $prop->getValue($font);
             $key = $refClass->getShortName() . '/' . Strings::toSnakeCase(Strings::toCamelCase($prop->getName()));
-            if (\is_a($type, ExternalResource::class, true)) {
-                $this->externalResources[$key] = [count($this->externalResources) + 1, $prop->getValue($font)];
-            } elseif (\is_a($type, SubResource::class, true)) {
-                $this->subResources[$key] = [count($this->subResources) + 1, $prop->getValue($font)];
-            } elseif ($type === 'array') {
-                foreach ($prop->getValue($font) as $k => $value) {
+            if ($value instanceof ExternalResource) {
+                $this->externalResources[$key] = [count($this->externalResources) + 1, $value];
+            } elseif ($value instanceof SubResource) {
+                $this->subResources[$key] = [count($this->subResources) + 1, $value];
+            } elseif (\is_array($value)) {
+                foreach ($value as $k => $v) {
                     $k = $key . '/' . Strings::toSnakeCase(Strings::toCamelCase($k));
-                    if (\is_a($value, ExternalResource::class, true)) {
-                        $this->externalResources[$k] = [count($this->externalResources) + 1, $value];
-                    } elseif (\is_a($value, SubResource::class, true)) {
-                        $this->subResources[$k] = [count($this->subResources) + 1, $value];
+                    if ($v instanceof ExternalResource) {
+                        $this->externalResources[$k] = [count($this->externalResources) + 1, $v];
+                    } elseif ($v instanceof SubResource) {
+                        $this->subResources[$k] = [count($this->subResources) + 1, $v];
                     }
                 }
             }
@@ -194,20 +215,24 @@ class TResFormatter
                 if (! $prop->hasType()) {
                     throw ValueException::untyped($node::class, $prop->getName());
                 }
-                $type = $prop->getType()->getName();
                 $key = $refClass->getShortName() . '/' . Strings::toSnakeCase(Strings::toCamelCase($prop->getName()));
-                if (\is_a($type, ExternalResource::class, true)) {
-                    $this->externalResources[$key] = [count($this->externalResources) + 1, $prop->getValue($node)];
-                } elseif (\is_a($type, SubResource::class, true)) {
-                    $this->subResources[$key] = [count($this->subResources) + 1, $prop->getValue($node)];
-                } elseif ($type === 'array') {
-                    $values = $prop->getValue($node);
-                    foreach ($values as $k => $value) {
+                /**
+                 * @var (ExternalResource|SubResource|
+                 *      array<string,ExternalResource|SubResource|scalar|null>|
+                 *      float|bool|string|int) $value
+                 */
+                $value = $prop->getValue($node);
+                if ($value instanceof ExternalResource) {
+                    $this->externalResources[$key] = [count($this->externalResources) + 1, $value];
+                } elseif ($value instanceof SubResource) {
+                    $this->subResources[$key] = [count($this->subResources) + 1, $value];
+                } elseif (\is_array($value)) {
+                    foreach ($value as $k => $v) {
                         $k = $key . '/' . Strings::toSnakeCase(Strings::toCamelCase($k));
-                        if (\is_a($value, ExternalResource::class, true)) {
-                            $this->externalResources[$k] = [count($this->externalResources) + 1, $value];
-                        } elseif (\is_a($value, SubResource::class, true)) {
-                            $this->subResources[$k] = [count($this->subResources) + 1, $value];
+                        if ($v instanceof ExternalResource) {
+                            $this->externalResources[$k] = [count($this->externalResources) + 1, $v];
+                        } elseif ($v instanceof SubResource) {
+                            $this->subResources[$k] = [count($this->subResources) + 1, $v];
                         }
                     }
                 }
