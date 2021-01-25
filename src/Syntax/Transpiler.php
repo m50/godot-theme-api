@@ -24,7 +24,7 @@ class Transpiler
         $theme = $this->parser->process($tokens);
 
         $formatter = new TResFormatter($theme);
-        
+
         return $formatter->render();
     }
 }
